@@ -18,37 +18,32 @@ bcrypt = Bcrypt(app)
 
 @app.route('/', methods=['GET'])
 def index():
-    if 'submitted' not in session:
-        session['submitted'] = False
     if 'visited' not in session:
-        session['visited'] = 1
+        session['visited'] = 0
     if 'userid' not in session:
         session['userid'] = 0
         session['visited'] +=1
-        print('user id and visits',session['userid'], 'visited', session['visited'])
-    else:
-        session['visited'] +=1
-        print('visited', session['visited'])
+        print('user id:',session['userid'], 'visited:', session['visited'])
     return render_template("index.html")
 
 @app.route('/register', methods=['POST'])
 def register():
     # check blank fields
-    if len(request.form['fname']) < 1:
-        flash("First name cannot be blank!")
-    elif len(request.form['lname']) < 1:
-        flash("Last name cannot be blank!")
+    if len(request.form['fname']) < 2:
+        flash("First name should have at least 2 characters")
+    elif len(request.form['lname']) < 2:
+        flash("Last name should have at least 2 characters")
     elif len(request.form['email']) < 1:
         flash("Email cannot be blank!")
-        if not EMAIL_REGEX.match(request.form['email']):
+    elif not EMAIL_REGEX.match(request.form['email']):
             flash("Invalid Email Address!")
-    elif len(request.form['password']) < 2:
+    elif len(request.form['password']) < 2 or len(request.form['password']) < 8:
             flash("Password should be more than 8 characters")
-    if request.form['password'].islower():
+    elif request.form['password'].islower():
         flash("Password should have at least 1 uppercase letter ")
-    if request.form['password'].isalpha():
+    elif request.form['password'].isalpha():
         flash("Password should have at least 1 numeric value ")
-    elif len(request.form['confirmPassword']) < 1:
+    elif len(request.form['confirmPassword']) < 2:
             flash("Please confirm password")
 
     else:
@@ -62,18 +57,18 @@ def register():
             "lname": request.form['lname'],
             "password_hash": pw_hash,
             }
-        # store the result (an array) from talking to the database in the variable emails
+        # store the result (an array) from talking to the database in the variable 
         queryResults = mysql.query_db(query,data)
+        # if there's a match in db, user already exist
         if len(queryResults) > 0:
             flash("user email already exit")
         #if user/email doesn't exist in db, insert it into the db
         else:
             query = "INSERT INTO customerleads.users (firstname, lastname, email,password) VALUES (%(fname)s, %(lname)s, %(email)s,%(password_hash)s);"
             queryResults = mysql.query_db(query,data)
-            session['submitted'] = True
             # get the new user id and place it in session
             print("what is the query result after insert?",queryResults)
-            session['userid'] = queryResults[0]['id']
+            session['userid'] = queryResults
             flash("You have been successfully registered!")
             return redirect('/success')
 
@@ -104,28 +99,25 @@ def register():
 
 @app.route('/login', methods=['POST'])
 def login():
-    print(session['userid'])
     query = "SELECT * FROM users WHERE email = %(email)s;"
     data = { "email" : request.form["login_email"] }
     result = mysql.query_db(query, data)
+    print('logged and query result: ',result)
     if result:
         if bcrypt.check_password_hash(result[0]['password'], request.form['login_password']):
             session['userid'] = result[0]['id']
             return redirect('/success')
     flash("You could not be logged in")
-    session['userid']
     return redirect("/")
 
 @app.route('/success')
 def success():
     #only valid users can see this page, so we will track sessions here
-    if session['visited']:
-        print('logged in success route for userid: ',session['visited'])
+    if session['userid']:
+        print('logged in success route for userid: ',session['userid'])
         return render_template('welcome.html')
-    else:
-        flash("please sign in")
-        return redirect("/")
-    return render_template('welcome.html')
+    flash("please sign in")
+    return redirect("/")
 
 @app.route('/logout')
 def logout():
