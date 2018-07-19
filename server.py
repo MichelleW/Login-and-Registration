@@ -9,7 +9,6 @@ import re
 # using pymSQLto connect mysql
 from mysqlconnection import connectToMySQL
 
-
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 
 app = Flask(__name__)
