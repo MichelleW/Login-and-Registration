@@ -5,19 +5,108 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Login and Registration</title>
+  <title>Simple Wall</title>
   {% include 'header.html' %}
+  <style>
+
+  .message-text{
+    display: inline-block;
+    width: 80%;
+    margin-left: 30px;
+    vertical-align: top;
+    padding: 20px;
+  }
+  .message-text:nth-child(even){
+    background-color: #eee;
+  }
+  .message-text:nth-child(odd){
+    background-color: #369;
+  }
+  .icon-trash,.icon-trash:hover{
+    vertical-align: top;
+    margin-left: 20px;
+  }
+  .icon-trash:hover{
+    color:#369;
+    margin-left: 20px;
+  }
+
+.navbar-light .navbar-brand, .navbar {
+    color: white;
+}
+textarea{
+  width: 88%;
+  vertical-align: top;
+}
+label{
+  font-weight: bold;
+}
+
+/* temporarily reseting container size  */
+.container{
+  max-width: 900px;
+}
+.message{
+  width: 100%;
+}
+  </style>
 </head>
 
 <body>
-  <div class="container">
-    <h3>Welcome!</h3>
+    <header>
+        <nav class="navbar sticky-top navbar-light bg-primary">
+            <a class="navbar-brand" href="/">The not so Simple Wall</a>
+            <h2 class="text-center">Welcome, {{userInfo[0]['firstname']}}</h2><a href="/logout" class="btn btn-info">Log out</a>
+          </nav>
+      
+    </header>
+  <div class="container mt-5">
+    <!-- output flash messages -->
     {% with messages = get_flashed_messages() %} {% if messages %} {% for message in messages %}
     <p class="alert alert-warning "> {{message}}</p>
     {% endfor %} {% endif %} {% endwith %}
-    <div class="text-right">
-      <a href="/logout" class="btn btn-primary">Log out</a>
-    </div>
+ 
+      <div class="row">
+        <div class="col mb-5">
+          <h3>New Message(s) for you, {{userInfo[0]['firstname']}}</h3>
+  
+        {% for item in userMessages %}
+          <div class="message">
+              <h5> {{item['firstname']}} said at <small>{{item['created_at']}}</small>: </h5>
+              
+              <div class="message-text">
+                  {{ item['messages'] }}
+                  
+               </div>
+               <a href="/delete/{{item['id']}}"><i class="text-right icon-trash icon-2x"></i></a>
+          </div>
+          {% endfor %}
+        </div>
+
+        <div class="col bg-light bg-alert">
+          <h3>Send a message</h3>
+          <!-- wrong info. we need total message sent, not received -->
+          <h6>You have sent a total of <span class="text-danger">
+            {{totalMsgSent| length}}</span> messages so far.</h6>
+          
+            {% for user in queryAllOtherUsersResults %}
+
+              <div class="message">
+                  <p>{{ user['firstname']}}: <small>id: {{ user['id']}}:</small></p>
+                <form action="/create_message" method="Post">
+                  <div class="form-control-sm">
+                      <input type="hidden" name="recipient_id" value="{{ user['id']}}">
+                      <input type="text" name="message" class="form-control"> 
+                      <input type="submit" name="send" class="btn btn-primary" value="Send">
+                  </div>
+                </form>
+              </div>
+            {% endfor %}
+ 
+
+   
+        </div>
+      </div>
   </div>
 </body>
 
