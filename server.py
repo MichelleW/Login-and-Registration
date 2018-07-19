@@ -63,7 +63,7 @@ def register():
             flash("user email already exit")
         #if user/email doesn't exist in db, insert it into the db
         else:
-            query = "INSERT INTO customerleads.users (firstname, lastname, email,password) VALUES (%(fname)s, %(lname)s, %(email)s,%(password_hash)s);"
+            query = "INSERT INTO mydb.users (firstname, lastname, email,password) VALUES (%(fname)s, %(lname)s, %(email)s,%(password_hash)s);"
             queryResults = mysql.query_db(query,data)
             # get the new user id and place it in session
             print("what is the query result after insert?",queryResults)
@@ -125,7 +125,7 @@ def logout():
 
 
 #Pass in the database name here
-mysql = connectToMySQL('customerleads')
+mysql = connectToMySQL('mydb')
 
 # now, we may invoke the query_db method
 # select the table from the db 
