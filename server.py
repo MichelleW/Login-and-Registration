@@ -99,17 +99,17 @@ def success():
             'sessionid':session['userid']
         }
         # join two tables by usersid = messages.sender_id
-        # userQuery = "select * from messages join users on users.id = messages.sender_id WHERE recipient_id = %(sessionid)s;"
+        userQuery = "select * from messages join users on users.id = messages.sender_id WHERE recipient_id = %(sessionid)s;"
         queryUserInfo = "select * from users WHERE users.id = %(sessionid)s;"
-        # totalMsgSent = "select * from messages where messages.sender_id = %(sessionid)s;"
+        totalMsgSent = "select * from messages where messages.sender_id = %(sessionid)s;"
         userInfo = mysql.query_db(queryUserInfo, data)
-        # # userQueryResult = mysql.query_db(userQuery, data)
-        # queryAllOtherUsers = "SELECT * FROM users WHERE id <> %(sessionid)s;"
+        userQueryResult = mysql.query_db(userQuery, data)
+        queryAllOtherUsers = "SELECT * FROM users WHERE id <> %(sessionid)s;"
     
-        # queryAllOtherUsersResults = mysql.query_db(queryAllOtherUsers,data)
-        # totalMsgSent= mysql.query_db(totalMsgSent,data)
-        # print('print query: ', userQueryResult)
-        # return render_template('welcome.html',userMessages = userQueryResult, userInfo=userInfo,queryAllOtherUsersResults=queryAllOtherUsersResults, totalMsgSent=totalMsgSent)
+        queryAllOtherUsersResults = mysql.query_db(queryAllOtherUsers,data)
+        totalMsgSent= mysql.query_db(totalMsgSent,data)
+        print('print query: ', userQueryResult)
+        return render_template('welcome.html',userMessages = userQueryResult, userInfo=userInfo,queryAllOtherUsersResults=queryAllOtherUsersResults, totalMsgSent=totalMsgSent)
         return render_template('welcome.html',userInfo=userInfo)
     flash("please sign in")
     return redirect("/")
