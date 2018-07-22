@@ -5,13 +5,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Login and Registration</title>
+  <title>Simple Wall</title>
   {% include 'header.html' %}
 </head>
 
 <body>
   <div class="mx-auto mt-5 col-8">
-    <h1 class="text-center mb-3">Login and Registration</h1>
+    <h1 class="text-center mb-3">Simple Wall</h1>
       {% with messages = get_flashed_messages() %}
         {% if messages %}
           {% for message in messages %}
@@ -35,7 +35,7 @@
                <input type="password" name="confirmPassword" class="form-control mb-3">
         
                 <div class="text-left">
-                  <button type="submit" class="btn btn-primary">Register</button>
+                  <button type="submit" class="btn btn-warning">Register</button>
                </div>
               </form>
           </div>
@@ -47,7 +47,7 @@
                   <input type="text" class="form-control mb-3" name="login_email">
                   Password:
                   <input type="password" class="form-control mb-3" name="login_password">
-                  <button class="btn btn-primary">Login</button>
+                  <button class="btn btn-warning">Login</button>
                 </form>
               </div>
             </div>
